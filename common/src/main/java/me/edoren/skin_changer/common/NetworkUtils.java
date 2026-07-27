@@ -6,12 +6,8 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.Proxy;
-import java.net.URL;
+import java.net.*;
 import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("unused")
@@ -32,7 +28,7 @@ public class NetworkUtils {
 
     public static byte[] downloadFile(String resource, Proxy proxy, int maxRetries) {
         try {
-            URL url = new URL(resource);
+            URL url = URI.create(resource).toURL();
             return downloadFile(url, proxy, maxRetries);
         } catch (MalformedURLException e) {
             LogManager.getLogger().error("Exception while calling downloadFile", e);
@@ -62,9 +58,8 @@ public class NetworkUtils {
 
                 LogManager.getLogger().info("File {} downloaded", url);
                 return stream.toByteArray();
-            } catch (FileNotFoundException ignored) {
-                return null;
-            } catch (IOException ignored) {
+            } catch (IOException e) {
+                LogManager.getLogger().debug(e.getMessage());
             }
         }
         LogManager.getLogger().info("Error downloading file {}", url);
@@ -73,7 +68,10 @@ public class NetworkUtils {
 
     public static String getPlayerUUID(String name) {
         byte[] jsonData = NetworkUtils.downloadFile(String.format("https://playerdb.co/api/player/minecraft/%s", name), null, 2);
-        if (jsonData == null) return null;
+        if (jsonData == null) {
+            LogManager.getLogger().error("Failed to fetch file from PlayerDB services!");
+            return null;
+        }
         String jsonStr = new String(jsonData);
         Gson gson = new Gson();
         PlayerDBModel playerDBModel = gson.fromJson(jsonStr, PlayerDBModel.class);
