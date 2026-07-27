@@ -7,6 +7,6 @@ public class CrafatarCapeProvider implements ISkinProvider {
     public byte[] getSkin(String playerName) {
         String uuid = NetworkUtils.getPlayerUUID(playerName);
         if (uuid == null) return null;
-        return NetworkUtils.downloadFile(String.format("https://crafatar.com/capes/%s", uuid), null, 2);
+        return NetworkUtils.downloadFile(String.format("https://crafatar-pub.neodium.fr/capes/%s", uuid), null, 2);
     }
 }
