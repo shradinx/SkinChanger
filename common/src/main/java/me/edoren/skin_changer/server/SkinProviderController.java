@@ -16,10 +16,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import org.apache.logging.log4j.LogManager;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -116,7 +113,7 @@ public class SkinProviderController {
     }
 
     private boolean setPlayerDataByURL(PlayerModel model, URL url, boolean cache, DataType dataType) {
-        byte[] data = NetworkUtils.downloadFile(url.toString(), null, 2);
+        byte[] data = NetworkUtils.downloadFile(url, null, 2);
         return storePlayerData(model, data, cache, dataType);
     }
 
@@ -137,7 +134,10 @@ public class SkinProviderController {
     }
 
     private boolean storePlayerData(PlayerModel model, byte[] data, boolean cache, DataType dataType) {
-        if (data == null) return false;
+        if (data == null) {
+            LogManager.getLogger().error("byte array data is null...");
+            return false;
+        }
         loadedData.get(dataType).put(model, data);
         if (cache)
             savePlayerDataToCache(dataType, model, data);
@@ -270,11 +270,14 @@ public class SkinProviderController {
         return playerModels != null ? new ArrayList<>(Arrays.asList(playerModels)) : new ArrayList<>();
     }
 
-    private void writeCacheFile(List<PlayerModel> playersCache) throws IOException {
+    private synchronized void writeCacheFile(List<PlayerModel> playersCache) throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        FileWriter fw = new FileWriter(cacheFile);
-        gson.toJson(playersCache, fw);
-        fw.close();
+        try (BufferedWriter bw = Files.newBufferedWriter(Path.of(cacheFile))) {
+            gson.toJson(playersCache, bw);
+        }
+//        FileWriter fw = new FileWriter(cacheFile);
+//        gson.toJson(playersCache, fw);
+//        fw.close();
     }
 
     private void onPlayerLogin(ServerPlayer player) {
