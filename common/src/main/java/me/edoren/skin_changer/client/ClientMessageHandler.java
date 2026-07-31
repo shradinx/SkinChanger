@@ -52,8 +52,8 @@ public class ClientMessageHandler {
         }
 
         for (PlayerSkinModel playerData : skinData) {
-            SkinLoaderService.GetInstance().loadPlayerSkin(playerData.getPlayer(), playerData.getSkin());
-            SkinLoaderService.GetInstance().loadPlayerCape(playerData.getPlayer(), playerData.getCape());
+            SkinLoaderService.GetInstance().loadPlayerSkin(playerData.getPlayer(), playerData.getSkin(), true);
+            SkinLoaderService.GetInstance().loadPlayerCape(playerData.getPlayer(), playerData.getCape(), true);
         }
     }
 }
