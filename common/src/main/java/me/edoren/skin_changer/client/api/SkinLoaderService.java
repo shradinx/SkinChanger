@@ -28,16 +28,18 @@ public class SkinLoaderService {
         return singleInstance;
     }
 
-    public void loadPlayerSkin(PlayerModel model, byte[] data) {
+    public void loadPlayerSkin(PlayerModel model, byte[] data, boolean log) {
         if (data == null) {
             loadedSkins.remove(model);
             return;
         }
 
-        LogManager.getLogger().info("Loading skin for player {}", model);
+        if (log)
+            LogManager.getLogger().info("Loading skin for player {}", model);
 
         if (ImageUtils.isNotValidData(data)) {
-            LogManager.getLogger().info("Error loading skin for player {}", model);
+            if (log)
+                LogManager.getLogger().info("Error loading skin for player {}", model);
             return;
         }
 
@@ -53,16 +55,18 @@ public class SkinLoaderService {
         }
     }
 
-    public void loadPlayerCape(PlayerModel model, byte[] data) {
+    public void loadPlayerCape(PlayerModel model, byte[] data, boolean log) {
         if (data == null) {
             loadedCapes.remove(model);
             return;
         }
 
-        LogManager.getLogger().info("Loading cape for player {}", model);
+        if (log)
+            LogManager.getLogger().info("Loading cape for player {}", model);
 
         if (ImageUtils.isNotValidData(data)) {
-            LogManager.getLogger().info("Error loading cape for player {}", model);
+            if (log)
+                LogManager.getLogger().info("Error loading cape for player {}", model);
             return;
         }
 
@@ -107,6 +111,9 @@ public class SkinLoaderService {
     }
 
     public void clear() {
+        loadedSkins.values().forEach(ISkin::onRemoval);
+        loadedCapes.values().forEach(ISkin::onRemoval);
+        
         loadedSkins.clear();
         loadedCapes.clear();
     }

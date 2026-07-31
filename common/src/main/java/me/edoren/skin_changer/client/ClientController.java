@@ -1,5 +1,6 @@
 package me.edoren.skin_changer.client;
 
+import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.architectury.event.events.client.ClientTickEvent;
 import me.edoren.skin_changer.client.api.ISkin;
 import me.edoren.skin_changer.client.api.SkinLoaderService;
@@ -8,6 +9,7 @@ import me.edoren.skin_changer.common.models.PlayerModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 
 import java.nio.ByteBuffer;
@@ -32,10 +34,12 @@ public class ClientController {
 
     public void initialize() {
         ClientTickEvent.CLIENT_PRE.register(this::onClientTickEvent);
+        ClientPlayerEvent.CLIENT_PLAYER_QUIT.register(this::onClientQuit);
     }
 
     public void deinitialize() {
         ClientTickEvent.CLIENT_PRE.unregister(this::onClientTickEvent);
+        ClientPlayerEvent.CLIENT_PLAYER_QUIT.unregister(this::onClientQuit);
     }
 
     public ResourceLocation getLocationCape(PlayerModel model) {
@@ -91,6 +95,10 @@ public class ClientController {
                 SkinLoaderService.GetInstance().getCape(model);
             }
         }
+    }
+    
+    private void onClientQuit(LocalPlayer player) {
+        SkinLoaderService.GetInstance().clear();
     }
 
 
