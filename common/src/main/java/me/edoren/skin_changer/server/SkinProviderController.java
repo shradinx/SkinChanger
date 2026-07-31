@@ -177,8 +177,8 @@ public class SkinProviderController {
     }
 
     private PlayerSkinModel getPlayerSkinData(PlayerModel profile) {
-        byte[] skin = loadedData.get(DataType.SKIN).get(profile);
-        byte[] cape = loadedData.get(DataType.CAPE).get(profile);
+        byte[] skin = loadedData.get(DataType.SKIN).getOrDefault(profile, null);
+        byte[] cape = loadedData.get(DataType.CAPE).getOrDefault(profile, null);
         return new PlayerSkinModel(profile, skin, cape);
     }
 
