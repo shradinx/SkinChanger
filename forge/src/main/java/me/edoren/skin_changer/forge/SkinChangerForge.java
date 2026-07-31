@@ -11,9 +11,9 @@ public class SkinChangerForge {
     SkinChanger instance;
 
     @SuppressWarnings("unused")
-    public SkinChangerForge() {
+    public SkinChangerForge(FMLJavaModLoadingContext context) {
         // Submit our event bus to let Architectury API register our content on the right time.
-        EventBuses.registerModEventBus(Constants.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
+        EventBuses.registerModEventBus(Constants.MOD_ID, context.getModEventBus());
 
         this.instance = new SkinChanger();
     }
