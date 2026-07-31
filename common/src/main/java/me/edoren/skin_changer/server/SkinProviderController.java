@@ -305,9 +305,9 @@ public class SkinProviderController {
         PlayerModel model = new PlayerModel(profile);
         if (loadedData.get(DataType.SKIN).containsKey(model) || loadedData.get(DataType.CAPE).containsKey(model)) {
             LogManager.getLogger().info("Removing session data for player {}[{}]", profile.getName(), profile.getId());
-            loadedData.get(DataType.SKIN).remove(model);
-            loadedData.get(DataType.CAPE).remove(model);
-            sendPlayerDataToAll(model);
+            clearPlayerData(model, DataType.SKIN);
+            clearPlayerData(model, DataType.CAPE);
+            sendDataToTarget(model, player);
         }
     }
 
